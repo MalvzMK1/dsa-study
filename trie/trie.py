@@ -34,18 +34,42 @@ class Trie:
                 return False
         return current_node.is_end_of_word
 
+    def get_possible_words(self, prefix: str) -> list[str]:
+        current_node = self.root
+        words = []
+
+        for char in prefix:
+            if char not in current_node.children:
+                return []
+            current_node = current_node.children[char]
+
+        previous_chars = []
+
+        def dfs(node: TrieNode, previous_chars):
+            if node.is_end_of_word:
+                words.append(prefix + ''.join(previous_chars))
+
+            for child in node.children:
+                previous_chars.append(child)
+                dfs(node.children[child], previous_chars)
+                previous_chars = []
+
+        dfs(current_node, previous_chars)
+
+        return words
+
 
 if __name__ == "__main__":
     trie = Trie()
 
-    word = input('Word: ')
-    trie.insert(word)
+    trie.insert('banana')
+    trie.insert('barista')
+    trie.insert('bar')
+    trie.insert('balde')
+    trie.insert('bana')
+    trie.insert('barco')
 
-    word = input('Search: ')
-    print(trie.search(word))
+    words = trie.get_possible_words('bar')
 
-    word = input('Starts With: ')
-    print(trie.starts_with(word))
-
-
+    print(words)
 
